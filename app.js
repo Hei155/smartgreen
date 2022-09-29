@@ -25,7 +25,8 @@ function deltaTime(t1, t0) {
 
 const file = reader.readFile('./Navigatsionnye_dannye_i_otmetki_vykhoda_s_18_06_2022_po_16_08_2022/Навигационные данные 01.07.2022.xlsx');
 
-let data = []
+let data = [];
+const processedData = [];
 
 const sheets = file.SheetNames
 
@@ -62,36 +63,54 @@ function calculation({t, l, v0, v1, vMax}) {
     let ar;
     let at;
     if (v0 != vMax && v1 != vMax && v0,v1,vMax>0){
+        let delta;
+        let deltaAr;
+        let deltaAt
         if (vAverageValue > v0 && vAverageValue > v1) {
-            const delta = (vMax-v0)*(vr-vp)/3.6 - (vMax-v1)*(vt-vp)/3.6;
-            const deltaAr = (l-vp*t) - ((vMax-v1)*(vt-vp)/3.6)*(4*(2*vAverageValue-v0-v1))/t;
-            const deltaAt = ((vMax-v0)*(vr-vp)/3.6)*(4*(2*vAverageValue-v0-v1))/t - (l-vp*t);
-            ar = deltaAr/delta;
-            at = deltaAt/delta;
-            tr = 1/((vMax-v0)/ar);
-            tt = 1/((vMax-v1)/at);
-            tp = 1/(t - tr - tt);
-            console.log(tr, tt, tp)
+            delta = (vMax-v0)*(vr-vp)/3.6 - (vMax-v1)*(vt-vp)/3.6;
+            deltaAr = (l-vp*t) - ((vMax-v1)*(vt-vp)/3.6)*(4*(2*vAverageValue-v0-v1))/t;
+            deltaAt = ((vMax-v0)*(vr-vp)/3.6)*(4*(2*vAverageValue-v0-v1))/t - (l-vp*t);
+            ar = 1/(deltaAr/delta);
+            at = 1/(deltaAt/delta);
+            tr = (vMax-v0)/ar;
+            tt = (vMax-v1)/at;
+            tp = t - tr - tt;
         } else if (vAverageValue > v0 && vAverageValue <= v1) {
-
+            delta = -(vMax-v1)*(vt-vp)/3.6;
+            deltaAr = -((vMax-v1)*(vt-vp)/3.6)*(t/(2*(vAverageValue-v0)));
+            deltaAt = (vMax-v0)*(vr-vp)/3.6*(t/(2*(vAverageValue-v0))) - (l-vp*t);
+            tr = (vMax-v0)/ar;
+            tt = (vMax-v1)/at;
+            tp = t - tr - tt;
+        } else if (vAverageValue <= v0 && vAverageValue > v1) {
+            delta = (vMax-v0)*(vr-vp)/3.6;
+            deltaAr = (l-vp*t) - ((vMax-v1)*(vt-vp)/3.6)*t/(2*(vAverageValue-v1));
+            deltaAt = ((vMax-v0)*(vr-vp)/3.6)*(t/(2*(vAverageValue-v1)));
+            tr = (vMax-v0)/ar;
+            tt = (vMax-v1)/at;
+            tp = t - tr - tt;
         }
-    } else if (v0 == vMax && v1 != vMax && tr == 0){
-            tp = t*((vAverageValue-vt)/(vr-vt))
+    } else if (v0 == vMax && v1 != vMax){
+            tp = t*((vAverageValue-vt)/(vp-vt))
             tt = t-tp
+            tr = 0;
             at = (vMax-v1)/tt
-    } else if(v1==vMax && v0 != vMax && tt == 0){
+    } else if(v1==vMax && v0 != vMax){
             tr = t*((vAverageValue-vp)/(vr-vp))
-            tp = t - tp
-            ap = (vMax-v0)/tr
+            tp = t - tr;
+            tt = 0;
+            ar = (vMax-v0)/tr;
     } else if (v0===v1 && v1===vMax && v0,v1,vMax>0) {
-            tp=l/t
-            tr=0
-            tt=0
-    } else {
-            tr=tp=tt=0
+            tp=l/t;
+            tr=0;
+            tt=0;
+    } else if (v0 === v1 && v1 === vMax) {
+            tr=tp=tt=0;
     }
+    processedData.push({'tr': tr, 'tt': tt, 'tp': tp})
 }
 
 data.forEach((dataBlock) => {
     calculation(dataBlock)
-})
+});
+
