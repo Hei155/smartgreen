@@ -11,6 +11,7 @@ const app = express();
 
 app.use(cors());
 app.options('*', cors());
+app.use(helmet.ieNoOpen());
 app.use(express.json());
 app.use('/data', data);
 app.use(bodyParser.json({limit: '50mb'}));
