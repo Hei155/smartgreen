@@ -1,36 +1,46 @@
 const mongoose = require('mongoose');
 
 const dataSchema = new mongoose.Schema({
-    v0: {
+    tr: {
         type: Number,
         required: true,
     },
 
-    vMax: {
+    tt: {
         type: Number,
         required: true,
     },
 
-    vMax: {
+    tp: {
         type: Number,
         required: true,
     },
 
-    distance: {
+    ar: {
         type: Number,
         required: true,
     },
 
-    t0: {
+    at: {
+        type: Number,
+        required: true,
+    },
+    
+    us: {
         type: Number,
         required: true,
     },
 
-    t1: {
+    usPas: {
         type: Number,
-        required: false,
-        default: 'Not existed for first string'
+        required: true,
     },
+
+    consum: {
+        type: Number,
+        required: true,
+    },
+
 })
 
 module.exports = mongoose.model('data', dataSchema)
