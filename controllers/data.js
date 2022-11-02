@@ -43,12 +43,12 @@ const calculation = (req, res, next) => {
             if (typeof temp[j].__EMPTY_7 == 'number' && a && j > 4) {
                 let date0 = a.v.split(' ')[1].split(':')
                 let date1 = b.v.split(' ')[1].split(':')
-                firstData.push({'row': count, 'distance': temp[j].__EMPTY_6, 't': deltaTime(date1, date0), 'l': temp[j].__EMPTY_14, 'v0': temp[j].__EMPTY_4, 'v1': v1, 'vMax': temp[j].__EMPTY_13})
+                firstData.push({'row': count, 'distance': temp[j].__EMPTY_6, 't': deltaTime(date1, date0), 'l': temp[j].__EMPTY_14, 'v0': temp[j].__EMPTY_4, 'v1': v1, 'vMax': temp[j].__EMPTY_13, 'latitude': temp[j].__EMPTY_2, 'longitude': temp[j].__EMPTY_1})
             }
             count++;
         }
     }
-    function calculation({row, t, l, v0, v1, vMax, distance}) {
+    function calculation({row, t, l, v0, v1, vMax, distance, latitude, longitude}) {
         let nx;
         let mi = 2640;
         let kz = 1;
@@ -70,7 +70,7 @@ const calculation = (req, res, next) => {
             us = consum * mi * kz * kv * kFuel;
             usPas = consum * mi * kzPas * kv * kFuel;
         }
-        processedData.push({'row': row, 'distance': distance, 'us': us, 'usPas': usPas, 'consum': consum})
+        processedData.push({'row': row, 'distance': distance, 'us': us, 'usPas': usPas, 'consum': consum, 'latitude': latitude, 'longitude': longitude})
     }
 
     firstData.forEach(block => calculation(block));
